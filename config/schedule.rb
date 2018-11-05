@@ -4,5 +4,5 @@ set :output, error: '/home/red2mine/red2mine/log/cron.stderr.log', standard: '/h
 end
 
 every 1.minutes do
-  runner 'ScheduleEmailNotificationJob.perform_now'
+  runner 'CustomRemindersEmailNotificationJob.perform_now'
 end

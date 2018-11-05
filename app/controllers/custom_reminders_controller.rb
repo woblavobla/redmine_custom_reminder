@@ -1,0 +1,3 @@
+class CustomRemindersController < ApplicationController
+
+end

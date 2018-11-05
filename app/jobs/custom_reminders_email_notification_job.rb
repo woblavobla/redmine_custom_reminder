@@ -1,4 +1,4 @@
-class ScheduleEmailNotificationJob < ApplicationJob
+class CustomRemindersEmailNotificationJob < ApplicationJob
   queue_as :default
 
   def perform(*args)
@@ -8,7 +8,7 @@ class ScheduleEmailNotificationJob < ApplicationJob
     project.issues.open.find_each(batch_size: 50) do |issue|
       issues_list << issue if current_date.diff(issue.updated_on)[:days] <= 5
     end
-    puts "ScheduleEmailNotificationJob performed #{args}"
-    Rails.logger.debug("ScheduleEmailNotificationJob performed #{args}")
+    puts "CustomRemindersEmailNotificationJob performed #{args}"
+    Rails.logger.debug("CustomRemindersEmailNotificationJob performed #{args}")
   end
 end

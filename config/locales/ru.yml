@@ -1,0 +1,2 @@
+ru:
+  mail_custom_reminder_subject: "%{count} назначенных на Вас задач"

@@ -1,4 +1,5 @@
 require 'redmine'
+require 'redmine_custom_reminders/hooks'
 
 Redmine::Plugin.register :redmine_custom_reminder do
   name 'Redmine custom email reminder'

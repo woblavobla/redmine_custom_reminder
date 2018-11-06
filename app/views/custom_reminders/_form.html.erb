@@ -1,0 +1,27 @@
+<div class="splitcontent">
+  <div class="splitcontentleft">
+    <div class="box tabular">
+      <p><%= f.text_field :name, :required => true, :size => 50 %></p>
+      <p><%= f.text_area :description, :cols => 40, :rows => 5 %></p>
+      <p><%= f.text_field :interval %></p>
+    </div>
+  </div>
+</div>
+
+<div style="clear: left;"></div>
+
+<fieldset class="box">
+  <div class="splitcontent">
+    <%= render :layout => 'layouts/collapsible',
+               :locals => {
+                   :collapsed => (not (@reminder.user_list_script.present? || @reminder.condition_script.present?)),
+                   :label => l(:label_custom_reminder_trigger_definition)} do %>
+      <div class="splitcontentleft">
+        <%= f.text_area :user_list_script, :cols => 40, :rows => 20, :wrap => 'off', :class => 'custom_reminder_script' %>
+      </div>
+      <div class="splitcontentright">
+        <%= f.text_area :condition_script, :cols => 40, :rows => 20, :wrap => 'off', :class => 'custom_reminder_script' %>
+      </div>
+    <% end %>
+  </div>
+</fieldset>

@@ -1,0 +1,25 @@
+<% html_title(l(:label_custom_reminders_plural)) -%>
+<div class="contextual">
+  <%= link_to l(:label_custom_reminder_new), new_custom_reminder_path, :class => 'icon icon-add' %>
+</div>
+
+<h2><%= l(:label_custom_reminders_plural) %></h2>
+
+<div class="autoscroll">
+  <% if @reminders.any? %>
+    <table class="custom-reminders list">
+      <thead>
+      <tr>
+        <th><%= l(:field_name) %></th>
+        <th><%= l(:field_description) %></th>
+        <th><%= l(:label_project_plural) %></th>
+      </tr>
+      </thead>
+      <tbody>
+
+      </tbody>
+    </table>
+  <% else %>
+    <p class="nodata"><%= l(:label_no_data) %></p>
+  <% end %>
+</div>

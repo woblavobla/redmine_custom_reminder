@@ -1,2 +1,7 @@
 ru:
   mail_custom_reminder_subject: "%{count} назначенных на Вас задач"
+  label_custom_reminders_plural: "Custom Reminders"
+  label_custom_reminder_new: "Добавить Custom Reminder"
+  label_custom_reminder_trigger_definition: "Условия для срабатывания Custom Reminder"
+  field_condition_script: "Условие для запуска email-рассылки"
+  field_user_list_script: "Скрипт для формирования списка пользователей"

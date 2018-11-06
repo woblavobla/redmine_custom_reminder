@@ -12,11 +12,21 @@
       <tr>
         <th><%= l(:field_name) %></th>
         <th><%= l(:field_description) %></th>
+        <th><%= l(:field_active) %></th>
         <th><%= l(:label_project_plural) %></th>
       </tr>
       </thead>
       <tbody>
-
+      <% @reminders.each do |reminder| %>
+        <tr class="<%= cycle("odd", "even") %> <%= 'disabled' unless reminder.active? %>">
+          <td class="name"><%= link_to reminder.name, edit_custom_reminder_path(reminder) %></td>
+          <td class="description"><%= reminder.description %></td>
+          <td class="active"><%= reminder.active %></td>
+          <td class="projects">
+            <%= reminder.projects.map(&:name).join(", ") %>
+          </td>
+        </tr>
+      <% end %>
       </tbody>
     </table>
   <% else %>

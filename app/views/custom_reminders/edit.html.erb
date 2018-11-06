@@ -1,0 +1,10 @@
+<h2><%= link_to l(:label_custom_reminders_plural), custom_reminders_path %> &#187; <%= l(:label_custom_reminder_new) %></h2>
+
+<%= error_messages_for 'reminder' %>
+
+<%= labelled_form_for @reminder do |f| %>
+  <%= render :partial => 'form', :locals => {:f => f} %>
+  <%= submit_tag l(:button_save) %>
+<% end %>
+
+<% html_title(l(:label_custom_reminders_plural), @reminder, l(:label_administration)) -%>

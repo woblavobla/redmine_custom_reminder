@@ -17,7 +17,7 @@ class CustomRemindersController < ApplicationController
   def create
     @reminder = CustomReminder.new(params_for_actions)
     respond_to do |format|
-      if params.key?(:commit) && @workflow.save
+      if params.key?(:commit) && @reminder.save
         flash[:notice] = l(:notice_successful_create)
         format.html { redirect_to(custom_reminders_path) }
       else
@@ -58,7 +58,7 @@ class CustomRemindersController < ApplicationController
   end
 
   def params_for_actions
-    params.require(:custom_workflow).permit(:name, :description,
+    params.require(:custom_reminder).permit(:name, :description,
                                             :interval, :executed_at,
                                             :user_list_script, :condition_script,
                                             :active,

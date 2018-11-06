@@ -26,6 +26,27 @@ class CustomRemindersController < ApplicationController
     end
   end
 
+  def update
+    respond_to do |format|
+      @reminder.assign_attributes(params_for_actions)
+      if params.has_key?(:commit) && @reminder.save
+        flash[:notice] = l(:notice_successful_update)
+        format.html { redirect_to(custom_reminders_path) }
+      else
+        format.html { render action: 'edit' }
+      end
+    end
+  end
+
+  def destroy
+    @reminder.destroy
+
+    respond_to do |format|
+      flash[:notice] = l(:notice_successful_delete)
+      format.html { redirect_to(custom_reminders_path) }
+    end
+  end
+
   def edit; end
 
   private

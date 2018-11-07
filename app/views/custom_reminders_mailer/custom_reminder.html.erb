@@ -1,9 +1,12 @@
 <p><%= l(:mail_custom_reminder_subject, :count => @issues.size) %></p>
 
-<ul>
-  <% @issues.each do |issue| -%>
-    <li><%= link_to_issue(issue, :project => true, :only_path => false) %></li>
-  <% end -%>
-</ul>
+<% @projects.each do |project| -%>
+  <h4><%= "#{l(:label_project)} - #{project.name}" %></h4>
+  <ul>
+    <% @issues.select {|i| i.project == project}.each do |issue| -%>
+      <li><%= link_to_issue(issue, :project => true, :only_path => false) %></li>
+    <% end -%>
+  </ul>
+<% end -%>
 
 <p><%= link_to l(:label_issue_view_all), @issues_url %></p>

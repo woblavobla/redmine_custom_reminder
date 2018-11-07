@@ -5,6 +5,7 @@ en:
   label_custom_reminder_trigger_definition: "Custom Reminder definition"
   label_custom_reminders_user_type: 'User defined script'
   label_reminder_enabled_projects: 'Enabled for projects'
+  label_trigger_updated_on: "Not updated %{count} days"
 
   field_trigger_type: Event that cause email-notify
   field_notification_recipient: Target group to notify

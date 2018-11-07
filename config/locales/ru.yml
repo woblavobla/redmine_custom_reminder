@@ -5,6 +5,7 @@ ru:
   label_custom_reminder_trigger_definition: "Пользовательские скрипты для обработки email-уведомления"
   label_custom_reminders_user_type: 'Пользовательский скрипт'
   label_reminder_enabled_projects: 'Активирован в следующих проектах'
+  label_trigger_updated_on: "Не обновлялась %{count} дней"
 
   field_trigger_type: 'Условие для запуска email-рассылки'
   field_notification_recipient: 'Целевая группа для email-рассылки'

@@ -2,3 +2,8 @@
     width: 98%;
     font-size: 11px;
 }
+
+#custom_reminder_enabled_projects ul {
+    max-height: 200px;
+    overflow-y: auto;
+}

@@ -1,10 +1,25 @@
 <div class="splitcontent">
   <div class="splitcontentleft">
     <div class="box tabular">
-      <p><%= f.text_field :name, :required => true, :size => 50 %></p>
+      <p><%= f.text_field :name, required: true, :size => 50 %></p>
       <p><%= f.text_area :description, :cols => 40, :rows => 5 %></p>
-      <p><%= f.text_field :interval %></p>
+      <p><%= f.text_field :interval, required: true %></p>
+      <p><%= f.select :condition_type, options_for_select(CustomReminder::CONDITION_TYPE, @reminder.condition_type) %></p>
+      <p><%= f.select :remind_type, options_for_select(CustomReminder::REMIND_TYPE, @reminder.remind_type) %></p>
+      <p><%= f.check_box :active %></p>
     </div>
+  </div>
+
+  <div class="splitcontentright">
+    <fieldset class="box" id="custom_reminder_enabled_projects">
+      <legend><%= l(:label_reminder_enabled_projects) %></legend>
+      <%= custom_reminder_render_nested_projects(Project.visible.active) do |p|
+        content_tag('label', check_box_tag('custom_reminder[project_ids][]', p.id, @reminder.project_ids.include?(p.id),
+                                           :id => nil) + ' ' + h(p), :class => 'block')
+      end %>
+      <%= hidden_field_tag('custom_reminder[project_ids][]', '', :id => nil) %>
+      <p><%= check_all_links 'custom_reminder_enabled_projects' %></p>
+    </fieldset>
   </div>
 </div>
 

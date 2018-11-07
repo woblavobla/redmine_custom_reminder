@@ -5,3 +5,6 @@ en:
   label_custom_reminder_trigger_definition: "Custom Reminder definition"
   field_condition_script: Condition for triggering custom reminder
   field_user_list_script: Script for generating users scope
+  field_interval: Sending interval
+  label_custom_reminders_user_type: 'User defined script'
+  label_reminder_enabled_projects: 'Enabled for projects'

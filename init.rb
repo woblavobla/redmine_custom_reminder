@@ -1,6 +1,8 @@
 require 'redmine'
 require 'redmine_custom_reminders/hooks'
 
+ActionView::Base.send(:include, RedmineCustomReminders::RenderHelper) unless ActionView::Base.include?(RedmineCustomReminders::RenderHelper)
+
 Redmine::Plugin.register :redmine_custom_reminder do
   name 'Redmine custom email reminder'
   author 'Andrey Lobanov(RedSoft)'
@@ -12,5 +14,5 @@ Redmine::Plugin.register :redmine_custom_reminder do
   menu :admin_menu,
        :custom_reminder,
        { controller: 'custom_reminders', action: :index },
-       if: Proc.new { User.current.admin? }
+       if: proc { User.current.admin? }
 end

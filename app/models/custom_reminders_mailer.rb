@@ -1,4 +1,6 @@
 class CustomRemindersMailer < Mailer
+  layout 'mailer'
+
   def custom_reminder(user, issues)
     @issues = issues
     @issues_url = url_for(controller: 'issues', action: 'index',
@@ -12,13 +14,13 @@ class CustomRemindersMailer < Mailer
   def self.custom_reminders(options={})
     user_ids = options[:users]
     project = options[:project] ? Project.find(options[:project]) : nil
+    projects = options[:projects] ? Project.where(:id => options[:projects]).to_a : nil
 
-    scope = Issue.open.where("#{Issue.table_name}.assigned_to_id IS NOT NULL" +
-                                 " AND #{Project.table_name}.status = #{Project::STATUS_ACTIVE}" +
-                                 " AND #{Issue.table_name}.due_date <= ?", days.day.from_now.to_date
-    )
-    scope = scope.where(:assigned_to_id => user_ids) if user_ids.present?
+    scope = Issue.open.where("#{Project.table_name}.status = #{Project::STATUS_ACTIVE}")
+    scope = scope.where("#{Issue.table_name}.updated_on <= ?", options[:trigger_param].day.until(Date.today)) if options[:trigger] == 'due_date'
+    scope = scope.where(:assigned_to_id => user_ids) if user_ids.present? && options[:notification_recipient] == 'assigned_to'
     scope = scope.where(:project_id => project.id) if project
+    scope = scope.where(:project_id => projects) if projects
 
     issues_by_assignee = scope.includes(:status, :assigned_to, :project, :tracker).
         group_by(&:assigned_to)

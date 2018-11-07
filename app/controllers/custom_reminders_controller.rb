@@ -60,7 +60,8 @@ class CustomRemindersController < ApplicationController
   def params_for_actions
     params.require(:custom_reminder).permit(:name, :description,
                                             :interval, :executed_at,
-                                            :user_list_script, :condition_script,
+                                            :trigger_type, :notification_recipient,
+                                            :user_scope_script, :trigger_script,
                                             :active,
                                             project_ids: [])
   end

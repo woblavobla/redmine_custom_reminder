@@ -11,6 +11,16 @@ class CustomReminder < ActiveRecord::Base
 
   validates :interval, numericality: { only_integer: true, greater_than_or_equal_to: 0, less_than_or_equal_to: 31 }
 
-  CONDITION_TYPE = [['Не обновлялась 5 дней', 1]] + [["**#{l(:label_custom_reminders_user_type)}**", -1]]
-  REMIND_TYPE = Role.all.map { |r| [r.name, r.id] } + [["**#{l(:label_custom_reminders_user_type)}**", -1]]
+  TRIGGER_TYPE = [['Не обновлялась 5 дней', 1]] + [["**#{l(:label_custom_reminders_user_type)}**", -1]]
+  NOTIFICATION_RECIPIENTS = Role.all.map { |r| [r.name, r.id] } + [["**#{l(:label_custom_reminders_user_type)}**", -1], ["**#{l(:field_assigned_to)}**", -2]]
+
+  def self.trigger_type_name(id = nil)
+    return nil if id.nil?
+    TRIGGER_TYPE.detect { |trigger| trigger.last == id }&.first
+  end
+
+  def self.notification_recipient_name(id = nil)
+    return nil if id.nil?
+    NOTIFICATION_RECIPIENTS.detect {|recipient| recipient.last == id}&.first
+  end
 end

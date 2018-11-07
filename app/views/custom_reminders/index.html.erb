@@ -12,6 +12,8 @@
       <tr>
         <th><%= l(:field_name) %></th>
         <th><%= l(:field_description) %></th>
+        <th><%= l(:field_trigger_type) %></th>
+        <th><%= l(:field_notification_recipient) %></th>
         <th><%= l(:field_active) %></th>
         <th><%= l(:label_project_plural) %></th>
       </tr>
@@ -21,7 +23,15 @@
         <tr class="<%= cycle("odd", "even") %> <%= 'disabled' unless reminder.active? %>">
           <td class="name"><%= link_to reminder.name, edit_custom_reminder_path(reminder) %></td>
           <td class="description"><%= reminder.description %></td>
-          <td class="active"><%= reminder.active %></td>
+          <td class="trigger_type"><%= CustomReminder.trigger_type_name(reminder.trigger_type) %></td>
+          <td class="notification_recipient"><%= CustomReminder.notification_recipient_name(reminder.notification_recipient) %></td>
+          <td class="active">
+            <% if reminder.active? %>
+              <span class="icon icon-ok"></span>
+            <% else %>
+              <span class="icon icon-not-ok"></span>
+            <% end %>
+          </td>
           <td class="projects">
             <%= reminder.projects.map(&:name).join(", ") %>
           </td>

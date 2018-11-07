@@ -1,0 +1,7 @@
+<%= l(:mail_custom_reminder_subject, :count => @issues.size) %>:
+
+<% @issues.each do |issue| -%>
+  * <%= "#{issue.project} - #{issue.tracker} ##{issue.id}: #{issue.subject}" %>
+<% end -%>
+
+<%= @issues_url %>

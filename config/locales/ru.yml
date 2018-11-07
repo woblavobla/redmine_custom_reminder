@@ -3,8 +3,11 @@ ru:
   label_custom_reminders_plural: "Пользовательские email-уведомления"
   label_custom_reminder_new: "Добавить пользовательское email-уведомление"
   label_custom_reminder_trigger_definition: "Пользовательские скрипты для обработки email-уведомления"
-  field_condition_script: "Условие для запуска email-рассылки"
-  field_user_list_script: "Скрипт для формирования списка пользователей"
-  field_interval: "Интервал рассылки уведомлений"
   label_custom_reminders_user_type: 'Пользовательский скрипт'
   label_reminder_enabled_projects: 'Активирован в следующих проектах'
+
+  field_trigger_type: 'Условие для запуска email-рассылки'
+  field_notification_recipient: 'Целевая группа для email-рассылки'
+  field_trigger_script: "Пользовательское условие для запуска email-рассылки"
+  field_user_scope_script: "Пользовательский скрипт для формирования списка пользователей"
+  field_interval: "Интервал рассылки уведомлений"

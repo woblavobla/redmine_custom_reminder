@@ -4,9 +4,9 @@
       <p><%= f.text_field :name, required: true, :size => 50 %></p>
       <p><%= f.text_area :description, :cols => 40, :rows => 5 %></p>
       <p><%= f.text_field :interval, required: true %></p>
-      <p><%= f.select :condition_type, options_for_select(CustomReminder::CONDITION_TYPE, @reminder.condition_type) %></p>
-      <p><%= f.select :remind_type, options_for_select(CustomReminder::REMIND_TYPE, @reminder.remind_type) %></p>
-      <p><%= f.check_box :active %></p>
+      <p><%= f.select :trigger_type, options_for_select(CustomReminder::TRIGGER_TYPE, @reminder.trigger_type), required: true %></p>
+      <p><%= f.select :notification_recipient, options_for_select(CustomReminder::NOTIFICATION_RECIPIENTS, @reminder.notification_recipient), required: true %></p>
+      <p><%= f.check_box :active, required: true %></p>
     </div>
   </div>
 
@@ -29,13 +29,13 @@
   <div class="splitcontent">
     <%= render :layout => 'layouts/collapsible',
                :locals => {
-                   :collapsed => (not (@reminder.user_list_script.present? || @reminder.condition_script.present?)),
+                   :collapsed => (!(@reminder.user_scope_script.present? || @reminder.trigger_script.present?)),
                    :label => l(:label_custom_reminder_trigger_definition)} do %>
       <div class="splitcontentleft">
-        <%= f.text_area :user_list_script, :cols => 40, :rows => 20, :wrap => 'off', :class => 'custom_reminder_script' %>
+        <%= f.text_area :user_scope_script, :cols => 40, :rows => 20, :wrap => 'off', :class => 'custom_reminder_script' %>
       </div>
       <div class="splitcontentright">
-        <%= f.text_area :condition_script, :cols => 40, :rows => 20, :wrap => 'off', :class => 'custom_reminder_script' %>
+        <%= f.text_area :trigger_script, :cols => 40, :rows => 20, :wrap => 'off', :class => 'custom_reminder_script' %>
       </div>
     <% end %>
   </div>

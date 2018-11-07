@@ -5,10 +5,10 @@ class InitializeCustomReminders < ActiveRecord::Migration[5.2]
       t.column :description, :text
       t.column :interval, :integer, default: 0, max: 31, min: 0, null: false
       t.column :executed_at, :datetime
-      t.column :condition_type, :integer, default: 0, null: false
-      t.column :remind_type, :integer, default: 0, null: false
-      t.column :user_list_script, :text, default: nil
-      t.column :condition_script, :text, default: nil
+      t.column :trigger_type, :integer, default: 0, null: false
+      t.column :notification_recipient, :integer, default: 0, null: false
+      t.column :user_scope_script, :text, default: nil
+      t.column :trigger_script, :text, default: nil
       t.column :active, :boolean, default: false, null: false
       t.timestamps
     end

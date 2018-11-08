@@ -7,6 +7,7 @@ class CustomRemindersMailer < Mailer
                           set_filter: 1, assigned_to_id: user.id,
                           sort: 'due_date:asc')
     @projects = params[:projects] unless params[:projects].nil?
+    @projects = @projects.select { |p| @issues.any? { |i| i.project == p } } if @projects
 
     mail to: user,
          subject: l(:mail_custom_reminder_subject, count: issues.size)
@@ -15,12 +16,19 @@ class CustomRemindersMailer < Mailer
   def self.custom_reminders(options = {})
     user_ids = options[:users]
     projects = options[:projects] ? Project.where(id: options[:projects]).to_a : nil
+    watchers = options[:watchers]
+    authors = options[:watchers]
 
     scope = Issue.open.where("#{Project.table_name}.status = #{Project::STATUS_ACTIVE}")
     scope = scope.where("#{Issue.table_name}.updated_on <= ?", options[:trigger_param].day.until(Date.today)) if options[:trigger] == 'updated_on'
     scope = scope.where(assigned_to_id: user_ids) if user_ids.present? && options[:notification_recipient] == 'assigned_to'
 
     scope = scope.where(custom_values: { custom_field_id: options[:role_id].to_i, value: user_ids }) if options[:role_id].present?
+
+    if options[:notification_recipient] == 'all_awa'
+      scope = scope.where("(#{Issue.table_name}.assigned_to_id in (?) OR #{Issue.table_name}.author_id in (?) OR #{Watcher.table_name}.user_id in (?))",
+                          user_ids, authors, watchers)
+    end
 
     scope = scope.where(project_id: projects) if projects
 
@@ -31,6 +39,33 @@ class CustomRemindersMailer < Mailer
     elsif options[:role_id].present?
       issues_by_user = scope.includes(:status, :assigned_to, :project, :tracker, :custom_values)
                             .group_by { |i| User.find_by_id(i.custom_field_value(options[:role_id].to_i)) }
+    elsif options[:notification_recipient] == 'all_awa'
+      issues_by_user = scope.includes(:status, :assigned_to, :project, :tracker, :author, :watchers)
+                            .group_by(&:assigned_to)
+      first_scope = scope.includes(:status, :assigned_to, :project, :tracker, :author, :watchers)
+                         .group_by(&:author)
+      second_scope = scope.includes(:status, :assigned_to, :project, :tracker, :author, :watchers)
+                          .group_by { |i| i.watchers.map(&:user) }
+      first_scope.keys.each do |author|
+        next unless author.is_a?(Group)
+        author.users.each do |user|
+          issues_by_user[user] ||= []
+          issues_by_user[user] += first_scope[author]
+        end
+      end
+      second_scope.keys.each do |watcher|
+        if watcher.is_a?(Array)
+          watcher.each do |user|
+            issues_by_user[user] ||= []
+            issues_by_user[user] += second_scope[watcher]
+          end
+        end
+        next unless watcher.is_a?(Group)
+        watcher.users.each do |user|
+          issues_by_user[user] ||= []
+          issues_by_user[user] += second_scope[watcher]
+        end
+      end
     end
 
     issues_by_user.keys.each do |assignee|

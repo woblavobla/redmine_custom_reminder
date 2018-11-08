@@ -11,9 +11,16 @@ class CustomRemindersEmailNotificationJob < ApplicationJob
 
   def execute_reminder(custom_reminder, *_args)
     case custom_reminder.trigger_type
-    when 2..7 # Updated more than or equal to 2..7 days ago
+    when 2..31 # Updated more than or equal to 2..31 days ago
       projects = custom_reminder.projects.to_a
       case custom_reminder.notification_recipient
+      when -3 # Author, assignee, watchers
+        assigned_to = projects.map { |pr| pr.issues.open.map { |i| i.assigned_to } }.flatten.compact.uniq.map(&:id)
+        watchers = projects.map { |pr| pr.issues.open.map { |i| i.watchers.map(&:user) } }.flatten.compact.uniq.map(&:id)
+        authors = projects.map { |pr| pr.issues.open.map { |i| i.author } }.flatten.compact.uniq.map(&:id)
+        CustomRemindersMailer.custom_reminders(projects: projects, users: assigned_to, trigger: 'updated_on',
+                                               watchers: watchers, author: authors,
+                                               trigger_param: custom_reminder.trigger_type.to_i, notification_recipient: 'all_awa')
       when -2 # Assigned to
         users = projects.map { |pr| pr.issues.open.map(&:assigned_to) }.flatten.compact.uniq.map(&:id)
         CustomRemindersMailer.custom_reminders(projects: projects, users: users, trigger: 'updated_on',

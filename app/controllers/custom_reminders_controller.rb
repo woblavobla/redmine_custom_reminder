@@ -49,6 +49,11 @@ class CustomRemindersController < ApplicationController
 
   def edit; end
 
+  def schedule_custom_reminder
+    CustomRemindersEmailNotificationJob.perform_now
+    redirect_to custom_reminders_path
+  end
+
   private
 
   def find_custom_reminder

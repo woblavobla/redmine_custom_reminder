@@ -15,9 +15,9 @@ class CustomRemindersEmailNotificationJob < ApplicationJob
       projects = custom_reminder.projects.to_a
       case custom_reminder.notification_recipient
       when -3 # Author, assignee, watchers
-        assigned_to = projects.map { |pr| pr.issues.open.map { |i| i.assigned_to } }.flatten.compact.uniq.map(&:id)
+        assigned_to = projects.map { |pr| pr.issues.open.map(&:assigned_to) }.flatten.compact.uniq.map(&:id)
         watchers = projects.map { |pr| pr.issues.open.map { |i| i.watchers.map(&:user) } }.flatten.compact.uniq.map(&:id)
-        authors = projects.map { |pr| pr.issues.open.map { |i| i.author } }.flatten.compact.uniq.map(&:id)
+        authors = projects.map { |pr| pr.issues.open.map(&:author) }.flatten.compact.uniq.map(&:id)
         CustomRemindersMailer.custom_reminders(projects: projects, users: assigned_to, trigger: 'updated_on',
                                                watchers: watchers, author: authors,
                                                trigger_param: custom_reminder.trigger_type.to_i, notification_recipient: 'all_awa')

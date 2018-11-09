@@ -12,7 +12,10 @@ class CustomRemindersEmailNotificationJob < ApplicationJob
 
   def execute_reminder(custom_reminder, options = {})
     unless options[:force]
-      return if Date.today < custom_reminder.executed_at.to_date + custom_reminder.interval
+      if Date.today < custom_reminder.executed_at.to_date + custom_reminder.interval
+        Rails.logger.debug("#{custom_reminder} wasn't executed cause of interval and will be executed at #{custom_reminder.executed_at.to_date + custom_reminder.interval};")
+        return
+      end
     end
     case custom_reminder.trigger_type
     when 2..31 # Updated more than or equal to 2..31 days ago

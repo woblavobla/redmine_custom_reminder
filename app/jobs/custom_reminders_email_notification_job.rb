@@ -3,13 +3,17 @@ class CustomRemindersEmailNotificationJob < ApplicationJob
 
   def perform(*args)
     custom_reminders = CustomReminder.all.to_a
+    options = { force: args&.first[:force] }
     custom_reminders.each do |cr|
-      execute_reminder(cr, args)
+      execute_reminder(cr, options)
     end
     Rails.logger.debug("CustomRemindersEmailNotificationJob performed for #{custom_reminders.size} custom_reminders")
   end
 
-  def execute_reminder(custom_reminder, *_args)
+  def execute_reminder(custom_reminder, options = {})
+    unless options[:force]
+      return if Date.today < custom_reminder.executed_at.to_date + custom_reminder.interval
+    end
     case custom_reminder.trigger_type
     when 2..31 # Updated more than or equal to 2..31 days ago
       projects = custom_reminder.projects.to_a
@@ -40,5 +44,6 @@ class CustomRemindersEmailNotificationJob < ApplicationJob
     when -1 # Section for user defined script
       # TODO
     end
+    custom_reminder.update_attribute(:executed_at, Time.now)
   end
 end

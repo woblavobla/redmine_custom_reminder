@@ -29,7 +29,7 @@ class CustomRemindersController < ApplicationController
   def update
     respond_to do |format|
       @reminder.assign_attributes(params_for_actions)
-      if params.has_key?(:commit) && @reminder.save
+      if params.key?(:commit) && @reminder.save
         flash[:notice] = l(:notice_successful_update)
         format.html { redirect_to(custom_reminders_path) }
       else
@@ -50,7 +50,7 @@ class CustomRemindersController < ApplicationController
   def edit; end
 
   def schedule_custom_reminder
-    CustomRemindersEmailNotificationJob.perform_now
+    CustomRemindersEmailNotificationJob.perform_now(params)
     redirect_to custom_reminders_path
   end
 

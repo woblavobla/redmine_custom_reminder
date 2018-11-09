@@ -1,7 +1,7 @@
 <% html_title(l(:label_custom_reminders_plural)) -%>
 <div class="contextual">
   <%= link_to l(:label_custom_reminder_new), new_custom_reminder_path, :class => 'icon icon-add' %>
-  <%= link_to l(:label_schedule_custom_reminder), schedule_custom_reminder_custom_reminders_path, :class => 'icon icon-email-add' %>
+  <%= link_to l(:label_schedule_custom_reminder), schedule_custom_reminder_custom_reminders_path({force: true}), :class => 'icon icon-email-add' %>
 </div>
 
 <h2><%= l(:label_custom_reminders_plural) %></h2>

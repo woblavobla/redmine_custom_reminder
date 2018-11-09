@@ -3,6 +3,25 @@
     font-size: 11px;
 }
 
+table.list.custom-reminders td {
+    vertical-align: middle;
+}
+
+table.list.custom-reminders td.description {
+    text-align: left;
+    width: 40%;
+}
+
+table.list.custom-reminders td.buttons {
+    white-space: normal;
+    width: 10%;
+    text-align: left;
+}
+
+table.list.custom-reminders tr.disabled {
+    color: silver;
+}
+
 #custom_reminder_enabled_projects ul {
     max-height: 200px;
     overflow-y: auto;

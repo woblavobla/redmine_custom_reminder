@@ -1,6 +1,6 @@
 en:
   mail_custom_reminder_subject: "%{count} назначенных на Вас задач"
-  label_custom_reminders_plural: Custom Reminders
+  label_custom_reminders_plural: 'Custom Reminders'
   label_custom_reminder_new: "New custom reminder"
   label_custom_reminder_trigger_definition: "Custom Reminder definition"
   label_custom_reminders_user_type: 'User defined script'
@@ -10,8 +10,8 @@ en:
   label_destroy_custom_reminder: "Destroy custom reminder"
   label_custom_reminder_to_author_and_watchers: "To assignee, author and watchers"
 
-  field_trigger_type: Event that cause email-notify
-  field_notification_recipient: Target group to notify
-  field_trigger_script: Condition for triggering custom reminder
-  field_user_scope_script: Script for generating users scope
-  field_interval: Sending interval
+  field_trigger_type: 'Event that cause email-notify'
+  field_notification_recipient: 'Target group to notify'
+  field_trigger_script: 'Condition for triggering custom reminder'
+  field_user_scope_script: 'Script for generating users scope'
+  field_interval: 'Sending interval'

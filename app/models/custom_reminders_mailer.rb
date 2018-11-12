@@ -17,7 +17,7 @@ class CustomRemindersMailer < Mailer
     user_ids = options[:users]
     projects = options[:projects] ? Project.where(id: options[:projects]).to_a : nil
     watchers = options[:watchers]
-    authors = options[:watchers]
+    authors = options[:authors]
 
     scope = Issue.open.where("#{Project.table_name}.status = #{Project::STATUS_ACTIVE}")
     scope = scope.where("#{Issue.table_name}.updated_on <= ?", options[:trigger_param].day.until(Date.today)) if options[:trigger] == 'updated_on'

@@ -15,3 +15,5 @@ en:
   field_trigger_script: 'Condition for triggering custom reminder'
   field_user_scope_script: 'Script for generating users scope'
   field_interval: 'Sending interval'
+
+  permission_manage_project_custom_reminders: "Manage project's custom reminders"

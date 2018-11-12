@@ -15,3 +15,5 @@ ru:
   field_trigger_script: "Пользовательское условие для запуска email-рассылки"
   field_user_scope_script: "Пользовательский скрипт для формирования списка пользователей"
   field_interval: "Интервал рассылки уведомлений"
+
+  permission_manage_project_custom_reminders: "Управление пользовательскими email-уведомлениями"

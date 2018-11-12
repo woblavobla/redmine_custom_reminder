@@ -19,7 +19,8 @@ class CustomRemindersMailer < Mailer
     watchers = options[:watchers]
     authors = options[:authors]
 
-    scope = Issue.open.where("#{Project.table_name}.status = #{Project::STATUS_ACTIVE}")
+    scope = Issue.open
+    scope = scope.where("#{Project.table_name}.status = #{Project::STATUS_ACTIVE}") if projects
     scope = scope.where("#{Issue.table_name}.updated_on <= ?", options[:trigger_param].day.until(Date.today)) if options[:trigger] == 'updated_on'
     scope = scope.where(assigned_to_id: user_ids) if user_ids.present? && options[:notification_recipient] == 'assigned_to'
 

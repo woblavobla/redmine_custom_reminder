@@ -29,7 +29,7 @@ class CustomRemindersEmailNotificationJob < ApplicationJob
                                                watchers: watchers, authors: authors,
                                                trigger_param: custom_reminder.trigger_type.to_i, notification_recipient: 'all_awa')
       when -2 # Assigned to
-        users = projects.map { |pr| pr.issues.open.map(&:assigned_to) }.flatten.compact.uniq.map(&:id)
+        users = projects.map { |pr| pr.issues.includes(:assigned_to).open.map(&:assigned_to) }.flatten.compact.uniq.map(&:id)
         CustomRemindersMailer.custom_reminders(projects: projects, users: users, trigger: 'updated_on',
                                                trigger_param: custom_reminder.trigger_type.to_i, notification_recipient: 'assigned_to')
       when -1 # User defined

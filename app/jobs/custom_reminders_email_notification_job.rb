@@ -18,7 +18,7 @@ class CustomRemindersEmailNotificationJob < ApplicationJob
       end
     end
     projects = custom_reminder.projects.to_a
-    case custom_reminder.trigger_type
+    case custom_reminder.trigger_type.to_i
     when 2..31 # Updated more than or equal to 2..31 days ago
       case custom_reminder.notification_recipient
       when -3 # Author, assignee, watchers

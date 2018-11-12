@@ -8,7 +8,7 @@ en:
   label_trigger_updated_on: "Not updated %{count} days"
   label_schedule_custom_reminder: "Schedule email-notification"
   label_destroy_custom_reminder: "Destroy custom reminder"
-  label_custom_reminder_to_author_and_watchers: "To author and watchers"
+  label_custom_reminder_to_author_and_watchers: "To assignee, author and watchers"
 
   field_trigger_type: Event that cause email-notify
   field_notification_recipient: Target group to notify

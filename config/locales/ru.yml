@@ -8,7 +8,7 @@ ru:
   label_trigger_updated_on: "Не обновлялась %{count} дней"
   label_schedule_custom_reminder: "Запустить планировщик email-рассылки"
   label_destroy_custom_reminder: "Удалить пользовательское email-уведомление"
-  label_custom_reminder_to_author_and_watchers: "Автору и наблюдателям"
+  label_custom_reminder_to_author_and_watchers: "Всем(назначена, автору и наблюдателям)"
 
   field_trigger_type: 'Условие для запуска email-рассылки'
   field_notification_recipient: 'Целевая группа для email-рассылки'

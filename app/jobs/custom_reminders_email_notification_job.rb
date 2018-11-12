@@ -17,9 +17,9 @@ class CustomRemindersEmailNotificationJob < ApplicationJob
         return
       end
     end
+    projects = custom_reminder.projects.to_a
     case custom_reminder.trigger_type
     when 2..31 # Updated more than or equal to 2..31 days ago
-      projects = custom_reminder.projects.to_a
       case custom_reminder.notification_recipient
       when -3 # Author, assignee, watchers
         assigned_to = projects.map { |pr| pr.issues.open.map(&:assigned_to) }.flatten.compact.uniq.map(&:id)
@@ -33,7 +33,7 @@ class CustomRemindersEmailNotificationJob < ApplicationJob
         CustomRemindersMailer.custom_reminders(projects: projects, users: users, trigger: 'updated_on',
                                                trigger_param: custom_reminder.trigger_type.to_i, notification_recipient: 'assigned_to')
       when -1 # User defined
-        # TODO
+        custom_reminder.prepare_and_run_custom_reminder(projects: projects, target: :user_scope)
       else
         role_id = custom_reminder.notification_recipient
         unless role_id.nil?
@@ -45,7 +45,7 @@ class CustomRemindersEmailNotificationJob < ApplicationJob
         end
       end
     when -1 # Section for user defined script
-      # TODO
+      custom_reminder.prepare_and_run_custom_reminder(projects: projects, target: :all)
     end
     custom_reminder.update_attribute(:executed_at, Time.now)
   end

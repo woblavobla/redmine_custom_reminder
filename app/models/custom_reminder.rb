@@ -26,4 +26,19 @@ class CustomReminder < ActiveRecord::Base
     return nil if id.nil?
     NOTIFICATION_RECIPIENTS.detect { |recipient| recipient.last == id }&.first
   end
+
+  def prepare_and_run_custom_reminder(options = {})
+    projects = options[:projects]
+    user_scope_script = read_attribute('user_scope_script')
+    trigger_script = read_attribute('trigger_script')
+    case options[:target]
+    when :user_scope
+      instance_eval(user_scope_script) unless user_scope_script.nil? || user_scope_script.empty?
+    when :all
+      instance_eval(user_scope_script) unless user_scope_script.nil? || user_scope_script.empty?
+      instance_eval(trigger_script) unless trigger_script.nil? || trigger_script.empty?
+    end
+  rescue StandardError => e
+    Rails.logger.error "== Custom reminder exception: #{e.message}\n #{e.backtrace.join("\n ")}"
+  end
 end

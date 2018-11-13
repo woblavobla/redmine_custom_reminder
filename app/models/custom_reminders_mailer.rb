@@ -5,7 +5,7 @@ class CustomRemindersMailer < Mailer
     @issues = issues
     @issues_url = url_for(controller: 'issues', action: 'index',
                           set_filter: 1, assigned_to_id: user.id,
-                          sort: 'due_date:asc')
+                          sort: 'due_date:asc', issue_id: @issues.map(&:id))
     @projects = params[:projects] unless params[:projects].nil?
     @projects = @projects.select { |p| @issues.any? { |i| i.project == p } } if @projects
 

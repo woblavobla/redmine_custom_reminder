@@ -33,9 +33,11 @@
                    :label => l(:label_custom_reminder_trigger_definition)} do %>
       <div class="splitcontentleft">
         <%= f.text_area :user_scope_script, :cols => 40, :rows => 20, :wrap => 'off', :class => 'custom_reminder_script' %>
+        <em class="info"><%= l(:text_custom_reminder_user_scope_info) %></em>
       </div>
       <div class="splitcontentright">
         <%= f.text_area :trigger_script, :cols => 40, :rows => 20, :wrap => 'off', :class => 'custom_reminder_script' %>
+        <em class="info"><%= l(:text_custom_reminder_trigger_info) %></em>
       </div>
     <% end %>
   </div>

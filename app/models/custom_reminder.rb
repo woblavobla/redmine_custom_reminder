@@ -38,7 +38,7 @@ class CustomReminder < ActiveRecord::Base
     end
     issues_hash = {} # Key=user, value=issue
     issues_list = []
-    Issue.open.where(project: projects).each(batch_size: 50) do |issue|
+    Issue.open.where(project: projects).each do |issue|
       instance_eval(trigger_script)
     end
     issues_list.each do |issue|

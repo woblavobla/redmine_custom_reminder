@@ -31,12 +31,24 @@ class CustomReminder < ActiveRecord::Base
     projects = options[:projects]
     user_scope_script = read_attribute('user_scope_script')
     trigger_script = read_attribute('trigger_script')
-    case options[:target]
-    when :user_scope
-      instance_eval(user_scope_script) unless user_scope_script.nil? || user_scope_script.empty?
-    when :all
-      instance_eval(user_scope_script) unless user_scope_script.nil? || user_scope_script.empty?
-      instance_eval(trigger_script) unless trigger_script.nil? || trigger_script.empty?
+    if user_scope_script.nil? || user_scope_script.empty? ||
+       trigger_script.nil? || trigger_script.empty?
+      Rails.logger.error('User script or trigger is nil or empty!') if logger
+      return
+    end
+    issues_hash = {} # Key=user, value=issue
+    issues_list = []
+    Issue.open.where(project: projects).find_each do |issue|
+      instance_eval(trigger_script)
+    end
+    issues_list.each do |issue|
+      instance_eval(user_scope_script)
+    end
+    issues_hash.each do |user, issues|
+      if user.is_a?(User) && user.active? && issues.present?
+        visible_issues = issues.select { |i| i.visible?(user) }
+        custom_reminder(user, visible_issues, projects: projects).deliver_later if visible_issues.present?
+      end
     end
   rescue StandardError => e
     Rails.logger.error "== Custom reminder exception: #{e.message}\n #{e.backtrace.join("\n ")}"

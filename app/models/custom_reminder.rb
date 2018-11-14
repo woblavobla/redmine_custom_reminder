@@ -29,27 +29,58 @@ class CustomReminder < ActiveRecord::Base
 
   def prepare_and_run_custom_reminder(options = {})
     projects = options[:projects]
+    trigger = options[:trigger]
+    trigger_param = options[:trigger_param]
+    target = options[:target]
+
     user_scope_script = read_attribute('user_scope_script')
     trigger_script = read_attribute('trigger_script')
-    if user_scope_script.nil? || user_scope_script.empty? ||
-       trigger_script.nil? || trigger_script.empty?
-      Rails.logger.error('User script or trigger is nil or empty!') if logger
-      return
-    end
+
     issues_hash = {} # Key=user, value=issue
     issues_list = []
-    Issue.open.where(project: projects).each do |issue|
-      instance_eval(trigger_script)
-    end
-    issues_list.each do |issue|
-      instance_eval(user_scope_script)
-    end
-    issues_hash.each do |user, issues|
-      if user.is_a?(User) && user.active? && issues.present?
-        visible_issues = issues.select { |i| i.visible?(user) }
-        custom_reminder(user, visible_issues, projects: projects).deliver_later if visible_issues.present?
+    case trigger
+    when :updated_on
+      Issue.open.where(project: projects).each do |issue|
+        issues_list << issue if issue.updated_on <= trigger_param.day.until(Date.today)
+      end
+    when :custom_trigger
+      Issue.open.where(project: projects).each do |issue|
+        instance_eval(trigger_script)
       end
     end
+
+    case target
+    when :assigned_to
+      issues_list.each do |issue|
+        issues_hash[issue.assigned_to] ||= []
+        issues_hash[issue.assigned_to] << issue
+      end
+    when :all_awa
+      issues_list.each do |issue|
+        issues_hash[issue.assigned_to] ||= []
+        issues_hash[issue.assigned_to] << issue
+        issues_hash[issue.author] ||= []
+        issues_hash[issue.author] << issue
+        issue.watchers.each do |w|
+          issues_hash[w.user] ||= []
+          issues_hash[w.user] << issue
+        end
+      end
+    when :role
+      role_id = notification_recipient
+      issues_list.each do |issue|
+        user_id = issue.custom_field_value(role_id)
+        next if user_id.nil? || user_id.empty?
+        user = User.find_by_id(user_id)
+        issues_hash[user] ||= []
+        issues_hash[user] << issue
+      end
+    when :user_scope
+      issues_list.each do |issue|
+        instance_eval(user_scope_script)
+      end
+    end
+    CustomRemindersMailer.custom_reminders(issues_hash, projects)
   rescue StandardError => e
     Rails.logger.error "== Custom reminder exception: #{e.message}\n #{e.backtrace.join("\n ")}"
   end

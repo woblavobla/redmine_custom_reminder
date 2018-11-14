@@ -18,34 +18,26 @@ class CustomRemindersEmailNotificationJob < ApplicationJob
       end
     end
     projects = custom_reminder.projects.to_a
-    case custom_reminder.trigger_type.to_i
+    trigger_type = custom_reminder.trigger_type.to_i
+    case trigger_type
     when 2..31 # Updated more than or equal to 2..31 days ago
       case custom_reminder.notification_recipient.to_i
       when -3 # Author, assignee, watchers
-        assigned_to = projects.map { |pr| pr.issues.includes(:assigned_to, :status).open.map(&:assigned_to) }.flatten.compact.uniq.map(&:id)
-        watchers = projects.map { |pr| pr.issues.includes(:watchers, :status).open.map { |i| i.watchers.map(&:user) } }.flatten.compact.uniq.map(&:id)
-        authors = projects.map { |pr| pr.issues.includes(:author, :status).open.map(&:author) }.flatten.compact.uniq.map(&:id)
-        CustomRemindersMailer.custom_reminders(projects: projects, users: assigned_to, trigger: 'updated_on',
-                                               watchers: watchers, authors: authors,
-                                               trigger_param: custom_reminder.trigger_type.to_i, notification_recipient: 'all_awa')
+        custom_reminder.prepare_and_run_custom_reminder(projects: projects, trigger: :updated_on,
+                                                        trigger_param: trigger_type, target: :all_awa)
       when -2 # Assigned to
-        users = projects.map { |pr| pr.issues.includes(:assigned_to, :status).open.map(&:assigned_to) }.flatten.compact.uniq.map(&:id)
-        CustomRemindersMailer.custom_reminders(projects: projects, users: users, trigger: 'updated_on',
-                                               trigger_param: custom_reminder.trigger_type.to_i, notification_recipient: 'assigned_to')
+        custom_reminder.prepare_and_run_custom_reminder(projects: projects, trigger: :updated_on,
+                                                        trigger_param: trigger_type, target: :assigned_to)
       when -1 # User defined
-        custom_reminder.prepare_and_run_custom_reminder(projects: projects, target: :user_scope)
+        custom_reminder.prepare_and_run_custom_reminder(projects: projects, trigger: :updated_on,
+                                                        trigger_param: trigger_type, target: :user_scope)
       else
-        role_id = custom_reminder.notification_recipient
-        unless role_id.nil?
-          users = projects.map { |pr| pr.issues.open.includes(:custom_values, :status).map { |i| i.custom_field_value(role_id) } }
-                          .flatten.compact.uniq.map(&:to_i).reject(&:zero?)
-          CustomRemindersMailer.custom_reminders(projects: projects, users: users, trigger: 'updated_on',
-                                                 trigger_param: custom_reminder.trigger_type.to_i, notification_recipient: 'role',
-                                                 role_id: role_id)
-        end
+        custom_reminder.prepare_and_run_custom_reminder(projects: projects, trigger: :updated_on,
+                                                        trigger_param: trigger_type, target: :role)
       end
     when -1 # Section for user defined script
-      custom_reminder.prepare_and_run_custom_reminder(projects: projects, target: :all)
+      custom_reminder.prepare_and_run_custom_reminder(projects: projects, trigger: :custom_trigger,
+                                                      trigger_param: trigger_type, target: :user_scope)
     end
     custom_reminder.update_attribute(:executed_at, Time.now)
   end

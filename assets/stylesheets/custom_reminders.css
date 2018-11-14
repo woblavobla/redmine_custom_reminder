@@ -1,3 +1,10 @@
+#admin-menu a.custom-reminder {
+    background-position: 0% 50%;
+    background-repeat: no-repeat;
+    padding-left: 20px;
+    background-image: url(../../../images/email.png);
+}
+
 .custom_reminder_script {
     width: 98%;
     font-size: 11px;

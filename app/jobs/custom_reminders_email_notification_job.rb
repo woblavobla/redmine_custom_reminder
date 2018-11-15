@@ -21,20 +21,18 @@ class CustomRemindersEmailNotificationJob < ApplicationJob
     trigger_type = custom_reminder.trigger_type.to_i
     case trigger_type
     when 2..31 # Updated more than or equal to 2..31 days ago
-      case custom_reminder.notification_recipient.to_i
-      when -3 # Author, assignee, watchers
-        custom_reminder.prepare_and_run_custom_reminder(projects: projects, trigger: :updated_on,
-                                                        trigger_param: trigger_type, target: :all_awa)
-      when -2 # Assigned to
-        custom_reminder.prepare_and_run_custom_reminder(projects: projects, trigger: :updated_on,
-                                                        trigger_param: trigger_type, target: :assigned_to)
-      when -1 # User defined
-        custom_reminder.prepare_and_run_custom_reminder(projects: projects, trigger: :updated_on,
-                                                        trigger_param: trigger_type, target: :user_scope)
-      else
-        custom_reminder.prepare_and_run_custom_reminder(projects: projects, trigger: :updated_on,
-                                                        trigger_param: trigger_type, target: :role)
-      end
+      target = case custom_reminder.notification_recipient.to_i
+               when -3 # Author, assignee, watchers
+                 :all_awa
+               when -2 # Assigned to
+                 :assigned_to
+               when -1 # User defined
+                 :user_scope
+               else
+                 :role
+               end
+      custom_reminder.prepare_and_run_custom_reminder(projects: projects, trigger: :updated_on,
+                                                      trigger_param: trigger_type, target: target)
     when -1 # Section for user defined script
       custom_reminder.prepare_and_run_custom_reminder(projects: projects, trigger: :custom_trigger,
                                                       trigger_param: trigger_type, target: :user_scope)

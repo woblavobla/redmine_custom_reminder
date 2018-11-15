@@ -7,7 +7,7 @@ Redmine::Plugin.register :redmine_custom_reminder do
   name 'Redmine Custom Email Reminder'
   author 'Andrey Lobanov(RedSoft)'
   description 'Sends email notifications by custom conditions'
-  version '0.1.0'
+  version '0.2.1'
 
   permission :manage_project_custom_reminders, {}, require: :member
 

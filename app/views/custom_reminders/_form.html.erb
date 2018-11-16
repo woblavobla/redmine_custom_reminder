@@ -4,8 +4,8 @@
       <p><%= f.text_field :name, required: true, :size => 50 %></p>
       <p><%= f.text_area :description, :cols => 40, :rows => 5 %></p>
       <p><%= f.text_field :interval, required: true %></p>
-      <p><%= f.select :trigger_type, options_for_select(CustomReminder::TRIGGER_TYPE, @reminder.trigger_type), required: true %></p>
-      <p><%= f.select :notification_recipient, options_for_select(CustomReminder::NOTIFICATION_RECIPIENTS, @reminder.notification_recipient), required: true %></p>
+      <p><%= f.select :trigger_type, options_for_select(CustomReminder.trigger_types, @reminder.trigger_type), required: true %></p>
+      <p><%= f.select :notification_recipient, options_for_select(CustomReminder.notification_recipient_names, @reminder.notification_recipient), required: true %></p>
       <p><%= f.check_box :active, required: true %></p>
     </div>
   </div>

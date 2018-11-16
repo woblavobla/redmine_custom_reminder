@@ -4,11 +4,19 @@ class CustomRemindersMailer < Mailer
   def custom_reminder(user, issues, params = {})
     @issues = issues
     @custom_reminder = params[:custom_reminder]
-    @issues_url = url_for(controller: 'issues', action: 'index',
-                          set_filter: 1, assigned_to_id: user.id,
-                          sort: 'due_date:asc', issue_id: @issues.map(&:id))
     @projects = params[:projects] unless params[:projects].nil?
     @projects = @projects.select { |p| @issues.any? { |i| i.project == p } } if @projects
+    query = IssueQuery.new
+    query.add_filter 'issue_id', '=', [@issues.map(&:id).join(',')]
+    query.filters = query.filters.except('status_id')
+    query.column_names = %w[project tracker status priority subject assigned_to updated_on]
+    query.sort_criteria = [%w[updated_on desc]]
+    query.group_by = 'status'
+    query.filters
+    q_params = query.as_params
+
+    @issues_url = Rails.application.routes.url_helpers.issues_path(q_params)
+    @issues_url = "http://#{Setting['host_name']}#{@issues_url}"
 
     mail to: user,
          subject: l(:mail_custom_reminder_subject, count: issues.size)

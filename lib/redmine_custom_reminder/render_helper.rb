@@ -1,4 +1,4 @@
-module RedmineCustomReminders
+module RedmineCustomReminder
   module RenderHelper
     # Renders a tree of projects as a nested set of unordered lists
     # The given collection may be a subset of the whole project tree

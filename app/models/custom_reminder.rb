@@ -44,9 +44,7 @@ class CustomReminder < ActiveRecord::Base
         issues_list << issue if issue.updated_on <= trigger_param.day.until(Date.today)
       end
     when :custom_trigger
-      Issue.open.where(project: projects).each do |issue|
-        instance_eval(trigger_script)
-      end
+      instance_eval(trigger_script)
     end
 
     case target

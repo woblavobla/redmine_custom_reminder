@@ -17,19 +17,25 @@ class CustomReminder < ActiveRecord::Base
                             [["**#{l(:label_custom_reminders_user_type)}**", -1], ["**#{l(:field_assigned_to)}**", -2],
                              ["**#{l(:label_custom_reminder_to_author_and_watchers)}**", -3]]
 
+  def self.trigger_types
+    @trigger_type ||= (2..31).map { |i| [l(:label_trigger_updated_on, count: i), i] } +
+        [["**#{l(:label_custom_reminders_user_type)}**", -1]]
+  end
+
+  def self.notification_recipient_names
+    @recipients ||= CustomField.where(field_format: 'user').map { |r| [r.name, r.id] } +
+        [["**#{l(:label_custom_reminders_user_type)}**", -1], ["*#{l(:field_assigned_to)}*", -2],
+         ["*#{l(:label_custom_reminder_to_author_and_watchers)}*", -3]]
+  end
+
   def self.trigger_type_name(id = nil)
     return nil if id.nil?
-    @trigger_type ||= (2..31).map { |i| [l(:label_trigger_updated_on, count: i), i] } +
-                      [["**#{l(:label_custom_reminders_user_type)}**", -1]]
-    @trigger_type.detect { |trigger| trigger.last == id }&.first
+    trigger_types.detect { |trigger| trigger.last == id }&.first
   end
 
   def self.notification_recipient_name(id = nil)
     return nil if id.nil?
-    @recipients ||= CustomField.where(field_format: 'user').map { |r| [r.name, r.id] } +
-                    [["**#{l(:label_custom_reminders_user_type)}**", -1], ["*#{l(:field_assigned_to)}*", -2],
-                     ["*#{l(:label_custom_reminder_to_author_and_watchers)}*", -3]]
-    @recipients.detect { |recipient| recipient.last == id }&.first
+    notification_recipient_names.detect { |recipient| recipient.last == id }&.first
   end
 
   def prepare_and_run_custom_reminder(options = {})

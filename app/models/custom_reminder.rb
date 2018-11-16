@@ -81,7 +81,7 @@ class CustomReminder < ActiveRecord::Base
     when :user_scope
       instance_eval(user_scope_script)
     end
-    CustomRemindersMailer.custom_reminders(issues_hash, projects)
+    CustomRemindersMailer.custom_reminders(issues_hash, projects, self)
   rescue StandardError => e
     Rails.logger.error "== Custom reminder exception: #{e.message}\n #{e.backtrace.join("\n ")}"
   end

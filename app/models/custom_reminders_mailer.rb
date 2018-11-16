@@ -3,6 +3,7 @@ class CustomRemindersMailer < Mailer
 
   def custom_reminder(user, issues, params = {})
     @issues = issues
+    @custom_reminder = params[:custom_reminder]
     @issues_url = url_for(controller: 'issues', action: 'index',
                           set_filter: 1, assigned_to_id: user.id,
                           sort: 'due_date:asc', issue_id: @issues.map(&:id))
@@ -13,11 +14,11 @@ class CustomRemindersMailer < Mailer
          subject: l(:mail_custom_reminder_subject, count: issues.size)
   end
 
-  def self.custom_reminders(issues_by_user = {}, projects = [])
+  def self.custom_reminders(issues_by_user = {}, projects = [], custom_reminder = nil)
     issues_by_user.each do |assignee, issues|
       if assignee.is_a?(User) && assignee.active? && issues.present?
         visible_issues = issues.select { |i| i.visible?(assignee) }
-        custom_reminder(assignee, visible_issues, projects: projects).deliver_later if visible_issues.present?
+        custom_reminder(assignee, visible_issues, projects: projects, custom_reminder: custom_reminder).deliver_later if visible_issues.present?
       end
     end
   end

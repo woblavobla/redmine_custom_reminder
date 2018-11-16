@@ -11,12 +11,6 @@ class CustomReminder < ActiveRecord::Base
 
   validates :interval, numericality: { only_integer: true, greater_than_or_equal_to: 0, less_than_or_equal_to: 31 }
 
-  TRIGGER_TYPE = (2..31).map { |i| [l(:label_trigger_updated_on, count: i), i] } +
-                 [["**#{l(:label_custom_reminders_user_type)}**", -1]]
-  NOTIFICATION_RECIPIENTS = CustomField.where(field_format: 'user').map { |r| [r.name, r.id] } +
-                            [["**#{l(:label_custom_reminders_user_type)}**", -1], ["**#{l(:field_assigned_to)}**", -2],
-                             ["**#{l(:label_custom_reminder_to_author_and_watchers)}**", -3]]
-
   def self.trigger_types
     @trigger_type ||= (2..31).map { |i| [l(:label_trigger_updated_on, count: i), i] } +
                       [["**#{l(:label_custom_reminders_user_type)}**", -1]]

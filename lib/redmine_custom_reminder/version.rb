@@ -16,8 +16,9 @@ module RedmineCustomReminder
         rescue
           #Nothing to do
         end
-        nil
+        return nil
       end
+      nil
     end
 
     REVISION = self.revision

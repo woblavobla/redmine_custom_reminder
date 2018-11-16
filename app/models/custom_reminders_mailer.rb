@@ -11,7 +11,7 @@ class CustomRemindersMailer < Mailer
     query.filters = query.filters.except('status_id')
     query.column_names = %w[project tracker status priority subject assigned_to updated_on]
     query.sort_criteria = [%w[updated_on desc]]
-    query.group_by = 'status'
+    query.group_by = 'project'
     query.filters
     q_params = query.as_params
 

@@ -1,5 +1,5 @@
 en:
-  mail_custom_reminder_subject: "%{count} назначенных на Вас задач"
+  mail_custom_reminder_subject: "[Redmine Custom Reminder] %{count} назначенных на Вас задач"
   label_custom_reminders_plural: 'Custom Reminders'
   label_custom_reminder_new: "New custom reminder"
   label_custom_reminder_trigger_definition: "Custom Reminder definition"

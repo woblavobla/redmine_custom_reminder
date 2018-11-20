@@ -9,6 +9,9 @@ ru:
   label_schedule_custom_reminder: "Запустить планировщик email-рассылки"
   label_destroy_custom_reminder: "Удалить пользовательское email-уведомление"
   label_custom_reminder_to_author_and_watchers: "Всем(назначена, автору и наблюдателям)"
+  label_custom_reminder_every_day: "Каждый день"
+  label_custom_reminder_every_day_wo_weekend: "Каждый день(исключая выходные)"
+  label_custom_reminder_each: "Каждый %{day}"
 
   field_trigger_type: 'Условие для запуска email-рассылки'
   field_notification_recipient: 'Целевая группа для email-рассылки'

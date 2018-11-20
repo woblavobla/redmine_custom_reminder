@@ -19,13 +19,23 @@ class CustomRemindersEmailNotificationJob < ApplicationJob
 
   def execute_reminder(custom_reminder, options = {})
     unless options[:force]
-      if Date.today < custom_reminder.executed_at.to_date + custom_reminder.interval
-        if logger
-          Rails.logger.debug("##{custom_reminder.id} wasn't executed cause of interval and will be executed at #{custom_reminder.executed_at.to_date + custom_reminder.interval};")
-        else
-          puts "##{custom_reminder.id} wasn't executed cause of interval and will be executed at #{custom_reminder.executed_at.to_date + custom_reminder.interval};"
-        end
+      today_date = Date.today
+      current_wday = today_date.wday
+      if today_date == custom_reminder.executed_at
+        Rails.logger.debug("##{custom_reminder.id} CR already executed today")
         return
+      end
+      case custom_reminder.interval.to_i
+      when -2
+        if [0, 6].include?(current_wday)
+          Rails.logger.debug("##{custom_reminder.id} CR will not be executed cause of weekend")
+          return
+        end
+      when 0..6
+        if custom_reminder.interval.to_i != current_wday # return if not today
+          Rails.logger.debug("##{custom_reminder.id} CR won't execute cause today is not a #{custom_reminder.interval.to_i} (wday - 0 is sunday)")
+          return
+        end
       end
     end
     projects = custom_reminder.projects.to_a

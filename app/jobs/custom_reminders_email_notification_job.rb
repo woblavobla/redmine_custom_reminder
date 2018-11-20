@@ -3,17 +3,28 @@ class CustomRemindersEmailNotificationJob < ApplicationJob
 
   def perform(*args)
     custom_reminders = CustomReminder.all.to_a
-    options = { force: args&.first[:force] }
+    options = {}
+    args.each do |arg|
+      options[:force] = arg.try(:[], :force)
+    end
     custom_reminders.each do |cr|
       execute_reminder(cr, options)
     end
-    Rails.logger.debug("CustomRemindersEmailNotificationJob performed for #{custom_reminders.size} custom_reminders")
+    if logger
+      logger.debug("CustomRemindersEmailNotificationJob performed for #{custom_reminders.size} custom_reminders")
+    else
+      puts "CustomRemindersEmailNotificationJob performed for #{custom_reminders.size} custom_reminders"
+    end
   end
 
   def execute_reminder(custom_reminder, options = {})
     unless options[:force]
       if Date.today < custom_reminder.executed_at.to_date + custom_reminder.interval
-        Rails.logger.debug("#{custom_reminder} wasn't executed cause of interval and will be executed at #{custom_reminder.executed_at.to_date + custom_reminder.interval};")
+        if logger
+          Rails.logger.debug("##{custom_reminder.id} wasn't executed cause of interval and will be executed at #{custom_reminder.executed_at.to_date + custom_reminder.interval};")
+        else
+          puts "##{custom_reminder.id} wasn't executed cause of interval and will be executed at #{custom_reminder.executed_at.to_date + custom_reminder.interval};"
+        end
         return
       end
     end

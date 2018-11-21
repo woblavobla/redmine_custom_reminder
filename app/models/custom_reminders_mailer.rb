@@ -23,11 +23,19 @@ class CustomRemindersMailer < Mailer
   end
 
   def self.custom_reminders(issues_by_user = {}, projects = [], custom_reminder = nil)
+    saved_method = ActionMailer::Base.delivery_method
+    if m = saved_method.to_s.match(/^async_(.+)$/)
+      synched_method = m[1]
+      ActionMailer::Base.delivery_method = synched_method.to_sym
+      ActionMailer::Base.send "#{synched_method}_settings=", ActionMailer::Base.send("async_#{synched_method}_settings")
+    end
     issues_by_user.each do |assignee, issues|
       if assignee.is_a?(User) && assignee.active? && issues.present?
         visible_issues = issues.select { |i| i.visible?(assignee) }
-        custom_reminder(assignee, visible_issues, projects: projects, custom_reminder: custom_reminder).deliver_later if visible_issues.present?
+        custom_reminder(assignee, visible_issues, projects: projects, custom_reminder: custom_reminder).deliver if visible_issues.present?
       end
     end
+  ensure
+    ActionMailer::Base.delivery_method = saved_method
   end
 end

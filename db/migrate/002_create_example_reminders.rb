@@ -2,7 +2,7 @@ class CreateExampleReminders < ActiveRecord::Migration[5.2]
   def change
     days1 = %w[0 1 2 3 4 5 6]
     CustomReminder.create!(name: 'Уведомление за 1 день до срока завершения задачи',
-                           active: false, send_days: days1.to_yaml, notification_recipient: -3, description: <<~EOD, trigger_script: <<~EOS)
+                           active: false, send_days: days1.to_yaml, notification_recipient: -2, description: <<~EOD, trigger_script: <<~EOS)
                              Уведомляет пользователей о задачах у которых истекает срок завершения.
                            EOD
                              cur_date = Date.today

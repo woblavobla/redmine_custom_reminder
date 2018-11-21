@@ -5,7 +5,6 @@ class InitializeCustomReminders < ActiveRecord::Migration[5.2]
       t.column :description, :text
       t.column :send_days, :string, null: true
       t.column :executed_at, :datetime
-      t.column :trigger_type, :integer, default: 0, null: false
       t.column :notification_recipient, :integer, default: 0, null: false
       t.column :user_scope_script, :text, default: nil
       t.column :trigger_script, :text, default: nil

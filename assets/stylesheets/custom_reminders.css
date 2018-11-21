@@ -16,7 +16,7 @@ table.list.custom-reminders td {
 
 table.list.custom-reminders td.description {
     text-align: left;
-    width: 40%;
+    width: 25%;
 }
 
 table.list.custom-reminders td.buttons {

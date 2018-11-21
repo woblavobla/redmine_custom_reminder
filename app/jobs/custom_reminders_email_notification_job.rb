@@ -18,7 +18,6 @@ class CustomRemindersEmailNotificationJob < ApplicationJob
   end
 
   def execute_reminder(custom_reminder, options = {})
-    toggle_active = nil
     unless options[:force]
       today_date = Date.today
       current_wday = today_date.wday
@@ -26,29 +25,12 @@ class CustomRemindersEmailNotificationJob < ApplicationJob
         Rails.logger.debug("##{custom_reminder.id} CR already executed today")
         return
       end
-      case custom_reminder.interval.to_i
-      when -3
-        date_to_execute = custom_reminder.date_to_execute
-        if date_to_execute.nil? || today_date < date_to_execute
-          Rails.logger.debug("##{custom_reminder.id} CR not executed because date to execute is #{date_to_execute}")
-          return
-        else
-          toggle_active = true
-        end
-      when -2
-        if [0, 6].include?(current_wday)
-          Rails.logger.debug("##{custom_reminder.id} CR will not be executed cause of weekend")
-          return
-        end
-      when 0..6
-        if custom_reminder.interval.to_i != current_wday # return if not today
-          Rails.logger.debug("##{custom_reminder.id} CR won't execute cause today is not a #{custom_reminder.interval.to_i} (wday - 0 is sunday)")
-          return
-        end
+      unless custom_reminder.send_days&.include?(current_wday.to_s)
+        Rails.logger.debug("##{custom_reminder.id} CR won't start cause wday #{current_wday} is not selected")
+        return
       end
     end
     projects = custom_reminder.projects.to_a
-    trigger_type = custom_reminder.trigger_type.to_i
     target = case custom_reminder.notification_recipient.to_i
              when -3 # Author, assignee, watchers
                :all_awa
@@ -59,15 +41,7 @@ class CustomRemindersEmailNotificationJob < ApplicationJob
              else
                :role
              end
-    case trigger_type
-    when 2..31 # Updated more than or equal to 2..31 days ago
-      custom_reminder.prepare_and_run_custom_reminder(projects: projects, trigger: :updated_on,
-                                                      trigger_param: trigger_type, target: target)
-    when -1 # Section for user defined script
-      custom_reminder.prepare_and_run_custom_reminder(projects: projects, trigger: :custom_trigger,
-                                                      trigger_param: trigger_type, target: target)
-    end
+    custom_reminder.prepare_and_run_custom_reminder(projects: projects, target: target)
     custom_reminder.update_attribute(:executed_at, Time.now)
-    custom_reminder.update_attribute(:active, false) if toggle_active
   end
 end

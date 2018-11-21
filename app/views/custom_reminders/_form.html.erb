@@ -3,9 +3,13 @@
     <div class="box tabular">
       <p><%= f.text_field :name, required: true, :size => 50 %></p>
       <p><%= f.text_area :description, :cols => 40, :rows => 5 %></p>
-      <p><%= f.select :interval, options_for_select(CustomReminder.interval_variables, @reminder.interval), required: true %></p>
-      <p id="date-to-execute-p" style="<%= @reminder.interval == -3 ? '' : 'display: none;' %>"><%= f.date_select :date_to_execute %></p>
-      <p><%= f.select :trigger_type, options_for_select(CustomReminder.trigger_types, @reminder.trigger_type), required: true %></p>
+      <p>
+        <%= label_tag 'custom_reminder[send_days][]', l(:field_send_days) %>
+        <% CustomReminder.send_days_array.each do |day_name, day_value| %>
+          <%= check_box_tag 'custom_reminder[send_days][]', day_value, @reminder.send_days&.include?(day_value.to_s), class: 'inline' %>
+          <%= label_tag 'custom_reminder[send_days][]', day_name, class: 'inline' %>
+        <% end %>
+      </p>
       <p><%= f.select :notification_recipient, options_for_select(CustomReminder.notification_recipient_names, @reminder.notification_recipient), required: true %></p>
       <p><%= f.check_box :active, required: true %></p>
     </div>
@@ -45,15 +49,3 @@
     <% end %>
   </div>
 </fieldset>
-
-<script type="application/javascript">
-    $(document).ready(function() {
-        $("#custom_reminder_interval").change(function() {
-            if ($(this).val() === "-3") {
-                $("#date-to-execute-p").show();
-            } else {
-                $("#date-to-execute-p").hide();
-            }
-        });
-    });
-</script>

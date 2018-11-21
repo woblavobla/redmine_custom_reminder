@@ -13,7 +13,6 @@
       <tr>
         <th><%= l(:field_name) %></th>
         <th><%= l(:field_description) %></th>
-        <th><%= l(:field_trigger_type) %></th>
         <th><%= l(:field_notification_recipient) %></th>
         <th><%= l(:field_active) %></th>
         <th><%= l(:label_project_plural) %></th>
@@ -25,7 +24,6 @@
         <tr class="<%= cycle("odd", "even") %> <%= 'disabled' unless reminder.active? %>">
           <td class="name"><%= link_to reminder.name, edit_custom_reminder_path(reminder) %></td>
           <td class="description"><%= reminder.description %></td>
-          <td class="trigger_type"><%= CustomReminder.trigger_type_name(reminder.trigger_type) %></td>
           <td class="notification_recipient"><%= CustomReminder.notification_recipient_name(reminder.notification_recipient) %></td>
           <td class="active">
             <% if reminder.active? %>
@@ -35,7 +33,7 @@
             <% end %>
           </td>
           <td class="projects">
-            <%= reminder.projects.map(&:name).join(", ") %>
+            <%= reminder.projects.map{ |p| link_to(p.name, project_path(p)) }.join(", ").html_safe %>
           </td>
           <td class="buttons">
             <%= link_to(l(:button_delete), reminder, :class => 'icon icon-del', :data => {:confirm => l(:text_are_you_sure)}, :confirm => l(:text_are_you_sure), :method => :delete) %>

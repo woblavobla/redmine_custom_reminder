@@ -9,13 +9,6 @@ class CustomReminder < ActiveRecord::Base
     where("EXISTS (SELECT * FROM #{projects_join_table} WHERE project_id=? AND custom_reminder_id=id)", project.id)
   end)
 
-  validates :interval, numericality: { only_integer: true, greater_than_or_equal_to: -10, less_than_or_equal_to: 31 }
-
-  def self.trigger_types
-    @trigger_type ||= (2..31).map { |i| [l(:label_trigger_updated_on, count: i), i] } +
-                      [["**#{l(:label_custom_reminders_user_type)}**", -1]]
-  end
-
   def self.notification_recipient_names
     @recipients ||= CustomField.where(field_format: 'user').map { |r| [r.name, r.id] } +
                     [["*#{l(:field_assigned_to)}*", -2],
@@ -23,16 +16,10 @@ class CustomReminder < ActiveRecord::Base
                      ["**#{l(:label_custom_reminders_user_type)}**", -1]]
   end
 
-  def self.interval_variables
-    @intervals ||= (0..6).map do |i|
-      [l(:label_custom_reminder_each, day: I18n.t('date.day_names')[i]).to_s, i]
-    end + [["*#{l(:label_custom_reminder_every_day)}*", -1], ["*#{l(:label_custom_reminder_every_day_wo_weekend)}*", -2],
-           ["*#{l(:label_custom_reminder_user_date)}*", -3]]
-  end
-
-  def self.trigger_type_name(id = nil)
-    return nil if id.nil?
-    trigger_types.detect { |trigger| trigger.last == id }&.first
+  def self.send_days_array
+    @send_days ||= (0..6).map do |i|
+      [I18n.t('date.day_names')[i].to_s, i]
+    end
   end
 
   def self.notification_recipient_name(id = nil)
@@ -40,10 +27,13 @@ class CustomReminder < ActiveRecord::Base
     notification_recipient_names.detect { |recipient| recipient.last == id }&.first
   end
 
+  def send_days
+    value = super
+    value.nil? ? nil : YAML.safe_load(value)
+  end
+
   def prepare_and_run_custom_reminder(options = {})
     projects = options[:projects]
-    trigger = options[:trigger]
-    trigger_param = options[:trigger_param]
     target = options[:target]
 
     user_scope_script = read_attribute('user_scope_script')
@@ -51,14 +41,7 @@ class CustomReminder < ActiveRecord::Base
 
     issues_hash = {} # Key=user, value=issue
     issues_list = []
-    case trigger
-    when :updated_on
-      Issue.open.where(project: projects).each do |issue|
-        issues_list << issue if issue.updated_on <= trigger_param.day.until(Date.today)
-      end
-    when :custom_trigger
-      instance_eval(trigger_script)
-    end
+    instance_eval(trigger_script) # Execute trigger script
 
     case target
     when :assigned_to

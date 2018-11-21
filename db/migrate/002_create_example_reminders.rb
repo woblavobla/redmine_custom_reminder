@@ -21,9 +21,16 @@ class CreateExampleReminders < ActiveRecord::Migration[5.2]
                                issues_list << issue if issue.updated_on < 7.day.until(cur_date)
                              end
                            EOS
+                             # Example with sending like in editing issue to assignee, watchers and author
                              issues_list.each do |issue|
                                issues_hash[issue.assigned_to] ||= []
                                issues_hash[issue.assigned_to] << issue
+                               issues_hash[issue.author] ||= []
+                               issues_hash[issue.author] << issue
+                               issue.watchers.each do |w|
+                                 issues_hash[w.user] ||= []
+                                 issues_hash[w.user] << issue
+                               end
                              end
                            EOK
   end

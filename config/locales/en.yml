@@ -12,12 +12,14 @@ en:
   label_custom_reminder_every_day: "Every day"
   label_custom_reminder_every_day_wo_weekend: "Every day(without holidays)"
   label_custom_reminder_each: "Each %{day}"
+  label_custom_reminder_user_date: "In chosen date"
 
   field_trigger_type: 'Event that cause email-notify'
   field_notification_recipient: 'Target group to notify'
   field_trigger_script: 'Condition for triggering custom reminder'
   field_user_scope_script: 'Script for generating users scope'
   field_interval: 'Sending interval'
+  field_date_to_execute: "Date to execute email reminder"
 
   permission_manage_project_custom_reminders: "Manage project's custom reminders"
 

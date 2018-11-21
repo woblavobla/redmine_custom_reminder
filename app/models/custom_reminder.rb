@@ -9,7 +9,7 @@ class CustomReminder < ActiveRecord::Base
     where("EXISTS (SELECT * FROM #{projects_join_table} WHERE project_id=? AND custom_reminder_id=id)", project.id)
   end)
 
-  validates :interval, numericality: { only_integer: true, greater_than_or_equal_to: 0, less_than_or_equal_to: 31 }
+  validates :interval, numericality: { only_integer: true, greater_than_or_equal_to: -10, less_than_or_equal_to: 31 }
 
   def self.trigger_types
     @trigger_type ||= (2..31).map { |i| [l(:label_trigger_updated_on, count: i), i] } +
@@ -26,7 +26,8 @@ class CustomReminder < ActiveRecord::Base
   def self.interval_variables
     @intervals ||= (0..6).map do |i|
       [l(:label_custom_reminder_each, day: I18n.t('date.day_names')[i]).to_s, i]
-    end + [["*#{l(:label_custom_reminder_every_day)}*", -1], ["*#{l(:label_custom_reminder_every_day_wo_weekend)}*", -2]]
+    end + [["*#{l(:label_custom_reminder_every_day)}*", -1], ["*#{l(:label_custom_reminder_every_day_wo_weekend)}*", -2],
+           ["*#{l(:label_custom_reminder_user_date)}*", -3]]
   end
 
   def self.trigger_type_name(id = nil)

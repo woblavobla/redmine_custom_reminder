@@ -2,7 +2,7 @@ class CustomRemindersEmailNotificationJob < ApplicationJob
   queue_as :default
 
   def perform(*args)
-    custom_reminders = CustomReminder.all.to_a
+    custom_reminders = CustomReminder.active.to_a
     options = {}
     args.each do |arg|
       options[:force] = arg.try(:[], :force)
@@ -18,6 +18,7 @@ class CustomRemindersEmailNotificationJob < ApplicationJob
   end
 
   def execute_reminder(custom_reminder, options = {})
+    toggle_active = nil
     unless options[:force]
       today_date = Date.today
       current_wday = today_date.wday
@@ -26,6 +27,14 @@ class CustomRemindersEmailNotificationJob < ApplicationJob
         return
       end
       case custom_reminder.interval.to_i
+      when -3
+        date_to_execute = custom_reminder.date_to_execute
+        if date_to_execute.nil? || today_date < date_to_execute
+          Rails.logger.debug("##{custom_reminder.id} CR not executed because date to execute is #{date_to_execute}")
+          return
+        else
+          toggle_active = true
+        end
       when -2
         if [0, 6].include?(current_wday)
           Rails.logger.debug("##{custom_reminder.id} CR will not be executed cause of weekend")
@@ -59,5 +68,6 @@ class CustomRemindersEmailNotificationJob < ApplicationJob
                                                       trigger_param: trigger_type, target: target)
     end
     custom_reminder.update_attribute(:executed_at, Time.now)
+    custom_reminder.update_attribute(:active, false) if toggle_active
   end
 end

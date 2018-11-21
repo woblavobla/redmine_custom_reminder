@@ -12,12 +12,14 @@ ru:
   label_custom_reminder_every_day: "Каждый день"
   label_custom_reminder_every_day_wo_weekend: "Каждый день(исключая выходные)"
   label_custom_reminder_each: "Каждый %{day}"
+  label_custom_reminder_user_date: "В выбранную дату"
 
   field_trigger_type: 'Условие для запуска email-рассылки'
   field_notification_recipient: 'Целевая группа для email-рассылки'
   field_trigger_script: "Пользовательское условие для запуска email-рассылки"
   field_user_scope_script: "Пользовательский скрипт для формирования списка пользователей"
   field_interval: "Интервал рассылки уведомлений(дни)"
+  field_date_to_execute: "Дата запуска рассылки"
 
   permission_manage_project_custom_reminders: "Управление пользовательскими email-уведомлениями"
 

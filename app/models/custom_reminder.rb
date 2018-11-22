@@ -12,9 +12,9 @@ class CustomReminder < ActiveRecord::Base
   class << self
     def notification_recipient_names
       @recipients ||= CustomField.where(field_format: 'user').map { |r| [r.name, r.id] } +
-          [["*#{l(:field_assigned_to)}*", -2],
-           ["*#{l(:label_custom_reminder_to_author_and_watchers)}*", -3],
-           ["**#{l(:label_custom_reminders_user_type)}**", -1]]
+                      [["*#{l(:field_assigned_to)}*", -2],
+                       ["*#{l(:label_custom_reminder_to_author_and_watchers)}*", -3],
+                       ["**#{l(:label_custom_reminders_user_type)}**", -1]]
     end
 
     def send_days_array
@@ -30,8 +30,8 @@ class CustomReminder < ActiveRecord::Base
 
     def import_from_yml(yml = nil)
       raise StandardError 'Yml is nil' if yml.nil?
-      hash = YAML.load(yml)
-      hash[:send_days] = YAML.load(hash[:send_days]) if hash[:send_days].present?
+      hash = YAML.safe_load(yml)
+      hash[:send_days] = YAML.safe_load(hash[:send_days]) if hash[:send_days].present?
       CustomReminder.new(hash)
     end
   end
@@ -92,5 +92,4 @@ class CustomReminder < ActiveRecord::Base
     fields.each { |f| object_hash[f] = self[f] }
     object_hash.to_yaml
   end
-
 end

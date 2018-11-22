@@ -9,22 +9,31 @@ class CustomReminder < ActiveRecord::Base
     where("EXISTS (SELECT * FROM #{projects_join_table} WHERE project_id=? AND custom_reminder_id=id)", project.id)
   end)
 
-  def self.notification_recipient_names
-    @recipients ||= CustomField.where(field_format: 'user').map { |r| [r.name, r.id] } +
-                    [["*#{l(:field_assigned_to)}*", -2],
-                     ["*#{l(:label_custom_reminder_to_author_and_watchers)}*", -3],
-                     ["**#{l(:label_custom_reminders_user_type)}**", -1]]
-  end
-
-  def self.send_days_array
-    @send_days ||= (0..6).map do |i|
-      [I18n.t('date.day_names')[i].to_s, i]
+  class << self
+    def notification_recipient_names
+      @recipients ||= CustomField.where(field_format: 'user').map { |r| [r.name, r.id] } +
+          [["*#{l(:field_assigned_to)}*", -2],
+           ["*#{l(:label_custom_reminder_to_author_and_watchers)}*", -3],
+           ["**#{l(:label_custom_reminders_user_type)}**", -1]]
     end
-  end
 
-  def self.notification_recipient_name(id = nil)
-    return nil if id.nil?
-    notification_recipient_names.detect { |recipient| recipient.last == id }&.first
+    def send_days_array
+      @send_days ||= (0..6).map do |i|
+        [I18n.t('date.day_names')[i].to_s, i]
+      end
+    end
+
+    def notification_recipient_name(id = nil)
+      return nil if id.nil?
+      notification_recipient_names.detect { |recipient| recipient.last == id }&.first
+    end
+
+    def import_from_yml(yml = nil)
+      raise StandardError 'Yml is nil' if yml.nil?
+      hash = YAML.load(yml)
+      hash[:send_days] = YAML.load(hash[:send_days]) if hash[:send_days].present?
+      CustomReminder.new(hash)
+    end
   end
 
   def send_days
@@ -76,4 +85,12 @@ class CustomReminder < ActiveRecord::Base
   rescue StandardError => e
     Rails.logger.error "== Custom reminder exception: #{e.message}\n #{e.backtrace.join("\n ")}"
   end
+
+  def export_as_yaml
+    fields = %i[name description send_days notification_recipient user_scope_script trigger_script active]
+    object_hash = {}
+    fields.each { |f| object_hash[f] = self[f] }
+    object_hash.to_yaml
+  end
+
 end

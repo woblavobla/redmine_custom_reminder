@@ -2,6 +2,7 @@
 <div class="contextual">
   <%= link_to l(:label_custom_reminder_new), new_custom_reminder_path, :class => 'icon icon-add' %>
   <%= link_to l(:label_schedule_custom_reminder), schedule_custom_reminder_custom_reminders_path({force: true}), :class => 'icon icon-email-add' %>
+  <%= link_to l(:label_custom_reminder_import), '#', :class => 'icon icon-import', :onclick => "showModal('import-dialog', '450px'); return false;" %>
 </div>
 
 <h2><%= l(:label_custom_reminders_plural) %></h2>
@@ -36,7 +37,8 @@
             <%= reminder.projects.map{ |p| link_to(p.name, project_path(p)) }.join(", ").html_safe %>
           </td>
           <td class="buttons">
-            <%= link_to(l(:button_delete), reminder, :class => 'icon icon-del', :data => {:confirm => l(:text_are_you_sure)}, :confirm => l(:text_are_you_sure), :method => :delete) %>
+            <p><%= link_to(l(:button_delete), reminder, :class => 'icon icon-del', :data => {:confirm => l(:text_are_you_sure)}, :confirm => l(:text_are_you_sure), :method => :delete) %></p>
+            <p><%= link_to("#{l(:label_export_to)} yml", export_custom_reminder_path(reminder), :class => 'icon icon-save') %></p>
           </td>
         </tr>
       <% end %>
@@ -44,5 +46,23 @@
     </table>
   <% else %>
     <p class="nodata"><%= l(:label_no_data) %></p>
+  <% end %>
+</div>
+
+<div id="import-dialog" style="display: none">
+  <h3 class="title"><%= l(:label_custom_reminder_import) %></h3>
+  <%= form_tag import_custom_reminders_path, :multipart => true do %>
+    <p>
+      <%= l(:field_custom_reminder_file) %>:
+    </p>
+
+    <p>
+      <%= file_field_tag 'file', :accept => 'application/yml' %>
+    </p>
+
+    <p class="buttons">
+      <%= submit_tag l(:button_import), :name => nil, :onclick => "hideModal(this);" %>
+      <%= submit_tag l(:button_cancel), :name => nil, :onclick => "hideModal(this);", :type => 'button' %>
+    </p>
   <% end %>
 </div>

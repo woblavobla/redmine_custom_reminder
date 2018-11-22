@@ -1,7 +1,7 @@
 class CustomRemindersController < ApplicationController
   layout 'admin'
   before_action :require_admin
-  before_action :find_custom_reminder, only: %i[show edit update destroy]
+  before_action :find_custom_reminder, only: %i[show edit update destroy export]
 
   def index
     @reminders = CustomReminder.all.to_a
@@ -48,6 +48,29 @@ class CustomRemindersController < ApplicationController
   end
 
   def edit; end
+
+  def export
+    send_data @reminder.export_as_yaml, filename: "#{@reminder.id}.yml", type: :yml
+  end
+
+  def import
+    yml = params[:file].read
+    begin
+      @reminder = CustomReminder.import_from_yml(yml)
+      @reminder.active = false
+      if @reminder.save
+        flash[:notice] = l(:notice_custom_reminder_import)
+      else
+        flash[:error] = @reminder.errors.full_messages.to_sentence
+      end
+    rescue StandardError => e
+      Rails.logger.warn "Custom reminder import error: #{e.message}\n #{e.backtrace.join("\n ")}"
+      flash[:error] = l(:error_custom_reminder_import)
+    end
+    respond_to do |format|
+      format.html { redirect_to(custom_reminders_path) }
+    end
+  end
 
   def schedule_custom_reminder
     CustomRemindersEmailNotificationJob.perform_now(params)

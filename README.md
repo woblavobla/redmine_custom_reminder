@@ -7,15 +7,15 @@ Regular plugin installation:
 1) Clone repository to your plugins dir
 2) Create application_job.rb in app/jobs/application_job.rb with following content
 
-```ruby
-class ApplicationJob < ActiveJob::Base
-  # Automatically retry jobs that encountered a deadlock
-  # retry_on ActiveRecord::Deadlocked
-
-  # Most jobs are safe to ignore if the underlying records are no longer available
-  # discard_on ActiveJob::DeserializationError
-end
-```
+    ```ruby
+    class ApplicationJob < ActiveJob::Base
+      # Automatically retry jobs that encountered a deadlock
+      # retry_on ActiveRecord::Deadlocked
+    
+      # Most jobs are safe to ignore if the underlying records are no longer available
+      # discard_on ActiveJob::DeserializationError
+    end
+    ```
 
 3) bundle install # Installing whenever gem
 4) rake redmine:plugins # Migrating db

@@ -11,17 +11,18 @@ module RedmineCustomReminder
           Dir.chdir(path) do
             revision = `#{Redmine::Scm::Adapters::GitAdapter.client_command} log --pretty=format:%h -n 1`
             return nil if revision.nil? || revision.empty?
+
             return revision
           end
-        rescue
-          #Nothing to do
+        rescue StandardError
+          # Nothing to do
         end
         return nil
       end
       nil
     end
 
-    REVISION = self.revision
+    REVISION = revision
     ARRAY = [MAJOR, MINOR, TINY, REVISION].compact
     STRING = ARRAY.join('.')
 

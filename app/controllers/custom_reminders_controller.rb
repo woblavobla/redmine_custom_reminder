@@ -9,9 +9,7 @@ class CustomRemindersController < ApplicationController
 
   def new
     @reminder = CustomReminder.new
-    respond_to do |format|
-      format.html
-    end
+    respond_to(&:html)
   end
 
   def create

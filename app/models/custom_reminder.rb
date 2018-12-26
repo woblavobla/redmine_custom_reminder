@@ -80,6 +80,8 @@ class CustomReminder < ActiveRecord::Base
       end
     when :user_scope
       instance_eval(user_scope_script)
+    else
+      raise StandardError, "Not implemented scope #{target}"
     end
     issues_hash.each_pair do |key, value|
       issues_hash[key] = value.uniq

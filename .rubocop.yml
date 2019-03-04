@@ -1,0 +1,14 @@
+AllCops:
+  TargetRubyVersion: 2.5
+  Exclude:
+    - db/schema.rb
+    - bin/*
+
+Metrics/BlockLength:
+  Max: 150
+
+Metrics/LineLength:
+  Max: 150
+
+Style/FrozenStringLiteralComment:
+  Enabled: false

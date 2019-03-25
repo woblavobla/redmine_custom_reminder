@@ -1,5 +1,5 @@
 class CustomRemindersEmailNotificationJob < ApplicationJob
-  queue_as :default
+  queue_as :email_notifications
 
   def perform(*args)
     custom_reminders = CustomReminder.active.to_a

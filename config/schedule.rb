@@ -1,5 +1,4 @@
 require 'rufus-scheduler'
-require 'custom_reminders_email_notification_job'
 
 scheduler = Rufus::Scheduler.new
 

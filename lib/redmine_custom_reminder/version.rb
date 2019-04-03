@@ -1,8 +1,8 @@
 module RedmineCustomReminder
   module Version
     MAJOR = 0
-    MINOR = 6
-    TINY = 4
+    MINOR = 7
+    TINY = 1
 
     def self.revision
       path = File.join(Rails.root, 'plugins/redmine_custom_reminder')

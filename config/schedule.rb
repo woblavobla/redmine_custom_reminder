@@ -1,8 +1,13 @@
-set :output, error: '/home/red2mine/red2mine/log/cron.stderr.log', standard: '/home/red2mine/red2mine/log/cron.stdout.log'
-%w[PATH BUNDLE_PATH GEM_HOME RAILS_ENV PWD GEM_PATH].each do |envir|
-  env(envir, ENV[envir])
+require 'rufus-scheduler'
+require 'custom_reminders_email_notification_job'
+
+scheduler = Rufus::Scheduler.new
+
+#scheduler.cron('00 10 * * *') do
+scheduler.every '2m' do
+  puts 'Scheduler started'
+  CustomRemindersEmailNotificationJob.perform_now
+  puts 'Scheduler complete'
 end
 
-every :day, at: '10am' do
-  runner 'CustomRemindersEmailNotificationJob.perform_now'
-end
+scheduler.join

@@ -1,4 +1,4 @@
-require_relative '../jobs/custom_reminders_email_notification_job'
+require_relative '../jobs/custom_reminders_job'
 
 class CustomRemindersController < ApplicationController
   layout 'admin'
@@ -73,7 +73,7 @@ class CustomRemindersController < ApplicationController
   end
 
   def schedule_custom_reminder
-    CustomRemindersEmailNotificationJob.perform_now(params)
+    CustomRemindersJob.perform_now(params)
     redirect_to custom_reminders_path
   end
 

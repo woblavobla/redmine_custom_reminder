@@ -1,6 +1,6 @@
 # Custom Reminders notification job
-class CustomRemindersEmailNotificationJob < ApplicationJob
-  queue_as :email_notifications
+class CustomRemindersJob < ApplicationJob
+  queue_as :custom_reminders
 
   def perform(*args)
     custom_reminders = CustomReminder.active.to_a
@@ -12,9 +12,7 @@ class CustomRemindersEmailNotificationJob < ApplicationJob
       execute_reminder(cr, options)
     end
     if logger
-      logger.debug("CustomRemindersEmailNotificationJob performed for #{custom_reminders.size} custom_reminders")
-    else
-      puts "CustomRemindersEmailNotificationJob performed for #{custom_reminders.size} custom_reminders"
+      logger.debug("CustomRemindersJob performed for #{custom_reminders.size} custom_reminders")
     end
   end
 

@@ -11,9 +11,7 @@ class CustomRemindersJob < ApplicationJob
     custom_reminders.each do |cr|
       execute_reminder(cr, options)
     end
-    if logger
-      logger.debug("CustomRemindersJob performed for #{custom_reminders.size} custom_reminders")
-    end
+    logger&.debug("CustomRemindersJob performed for #{custom_reminders.size} custom_reminders")
   end
 
   def execute_reminder(custom_reminder, options = {})

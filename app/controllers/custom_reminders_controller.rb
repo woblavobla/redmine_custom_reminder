@@ -50,7 +50,7 @@ class CustomRemindersController < ApplicationController
   def edit; end
 
   def export
-    send_data @reminder.export_as_yaml, filename: "#{@reminder.id}.yml", type: :yml
+    send_data @reminder.export_as_yaml, filename: "#{@reminder.name}.yml", type: :yml
   end
 
   def import

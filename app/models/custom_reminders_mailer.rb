@@ -16,10 +16,13 @@ class CustomRemindersMailer < Mailer
     q_params = query.as_params
 
     @issues_url = Rails.application.routes.url_helpers.issues_path(q_params)
-    @issues_url = "http://#{Setting['host_name']}#{@issues_url}"
+    hostonly = Setting.host_name.gsub(/^https:\/\//,'') unless Setting.host_name.downcase.match("^http://")
+    hostonly = Setting.host_name.gsub(/^http:\/\//,'') unless Setting.host_name.downcase.match("^https://")
+    hostonly = hostonly.gsub(%r{#{Redmine::Utils.relative_url_root}},'')
+    @issues_url = "#{Setting.protocol}://#{hostonly}#{@issues_url}"
 
     mail to: user,
-         subject: l(:mail_custom_reminder_subject, count: issues.size)
+         subject: l(:mail_custom_reminder_subject, count: issues.size) + " - " + @custom_reminder.name
   end
 
   def self.custom_reminders(issues_by_user = {}, projects = [], custom_reminder = nil)
